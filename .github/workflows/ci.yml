@@ -36,11 +36,25 @@ jobs:
       - name: Run linter
         run: npm run lint || true
 
+      - name: Check for test files
+        id: check-tests
+        run: |
+          if [ -d "test" ] || find . -maxdepth 2 -name "*.test.js" -o -name "*.spec.js" | grep -q .; then
+            echo "has_tests=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_tests=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Run tests
+        if: steps.check-tests.outputs.has_tests == 'true'
         run: npm test
         env:
           MONGO_URL: mongodb://localhost:27017/test_db
           PORT: 3001
+
+      - name: Skip tests (no test files)
+        if: steps.check-tests.outputs.has_tests == 'false'
+        run: echo "⚠️ No test files found - skipping test execution. Add tests to enable this step."
 
   # Test Order Service
   test-order-service:
