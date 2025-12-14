@@ -1,0 +1,596 @@
+{
+	"info": {
+		"_postman_id": "microservices-ecommerce-001",
+		"name": "Microservices E-Commerce API",
+		"description": "Complete API collection for Phone Case E-Commerce Platform with User, Product, and Order services",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "User Service",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url_user}}/",
+							"host": ["{{base_url_user}}"],
+							"path": [""]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set(\"userId\", jsonData._id);",
+									"    console.log(\"Saved userId: \" + jsonData._id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"ahh zeiipov\",\n  \"email\": \"zeii.pov@example.com\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url_user}}/users",
+							"host": ["{{base_url_user}}"],
+							"path": ["users"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Another User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set(\"userId2\", jsonData._id);",
+									"    console.log(\"Saved userId2: \" + jsonData._id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"poch sreypov\",\n  \"email\": \"poch.sreypov@example.com\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url_user}}/users",
+							"host": ["{{base_url_user}}"],
+							"path": ["users"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url_user}}/users/{{userId}}",
+							"host": ["{{base_url_user}}"],
+							"path": ["users", "{{userId}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User - Error (Not Found)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url_user}}/users/507f1f77bcf86cd799439011",
+							"host": ["{{base_url_user}}"],
+							"path": ["users", "507f1f77bcf86cd799439011"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create User - Error (Duplicate Email)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Duplicate User\",\n  \"email\": \"john.doe@example.com\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url_user}}/users",
+							"host": ["{{base_url_user}}"],
+							"path": ["users"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Product Service",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url_product}}/",
+							"host": ["{{base_url_product}}"],
+							"path": [""]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Product - Aesthetic",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set(\"productId\", jsonData._id);",
+									"    console.log(\"Saved productId: \" + jsonData._id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Aesthetic Phone Case\",\n  \"price\": 29.99,\n  \"category\": \"aesthetic\",\n  \"description\": \"Beautiful minimalist design with floral patterns\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url_product}}/products",
+							"host": ["{{base_url_product}}"],
+							"path": ["products"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Product - Trendy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set(\"productId2\", jsonData._id);",
+									"    console.log(\"Saved productId2: \" + jsonData._id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Trendy Phone Case\",\n  \"price\": 24.99,\n  \"category\": \"trendy\",\n  \"description\": \"Latest fashion trends with vibrant colors\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url_product}}/products",
+							"host": ["{{base_url_product}}"],
+							"path": ["products"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Product - Minimalist",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Minimalist Phone Case\",\n  \"price\": 19.99,\n  \"category\": \"minimalist\",\n  \"description\": \"Clean and simple design\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url_product}}/products",
+							"host": ["{{base_url_product}}"],
+							"path": ["products"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url_product}}/products",
+							"host": ["{{base_url_product}}"],
+							"path": ["products"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Filter Products by Category - Trendy",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url_product}}/products?category=trendy",
+							"host": ["{{base_url_product}}"],
+							"path": ["products"],
+							"query": [
+								{
+									"key": "category",
+									"value": "trendy"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Filter Products by Category - Aesthetic",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url_product}}/products?category=aesthetic",
+							"host": ["{{base_url_product}}"],
+							"path": ["products"],
+							"query": [
+								{
+									"key": "category",
+									"value": "aesthetic"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Product by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url_product}}/products/{{productId}}",
+							"host": ["{{base_url_product}}"],
+							"path": ["products", "{{productId}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Product - Error (Not Found)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url_product}}/products/507f1f77bcf86cd799439011",
+							"host": ["{{base_url_product}}"],
+							"path": ["products", "507f1f77bcf86cd799439011"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Order Service",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url_order}}/",
+							"host": ["{{base_url_order}}"],
+							"path": [""]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Order (Valid User & Product)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set(\"orderId\", jsonData._id);",
+									"    console.log(\"Saved orderId: \" + jsonData._id);",
+									"    console.log(\"Order created successfully!\");",
+									"    console.log(\"Product Name: \" + jsonData.productName);",
+									"    console.log(\"Product Price: \" + jsonData.productPrice);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userId\": \"{{userId}}\",\n  \"productId\": \"{{productId}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url_order}}/orders",
+							"host": ["{{base_url_order}}"],
+							"path": ["orders"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Another Order",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set(\"orderId2\", jsonData._id);",
+									"    console.log(\"Saved orderId2: \" + jsonData._id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userId\": \"{{userId2}}\",\n  \"productId\": \"{{productId2}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url_order}}/orders",
+							"host": ["{{base_url_order}}"],
+							"path": ["orders"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Order by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url_order}}/orders/{{orderId}}",
+							"host": ["{{base_url_order}}"],
+							"path": ["orders", "{{orderId}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Order - Error (Invalid User)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userId\": \"507f1f77bcf86cd799439011\",\n  \"productId\": \"{{productId}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url_order}}/orders",
+							"host": ["{{base_url_order}}"],
+							"path": ["orders"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Order - Error (Invalid Product)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userId\": \"{{userId}}\",\n  \"productId\": \"507f1f77bcf86cd799439011\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url_order}}/orders",
+							"host": ["{{base_url_order}}"],
+							"path": ["orders"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Order - Error (Missing Fields)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userId\": \"{{userId}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url_order}}/orders",
+							"host": ["{{base_url_order}}"],
+							"path": ["orders"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Order - Error (Not Found)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url_order}}/orders/507f1f77bcf86cd799439011",
+							"host": ["{{base_url_order}}"],
+							"path": ["orders", "507f1f77bcf86cd799439011"]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url_user",
+			"value": "http://localhost:3001",
+			"type": "string"
+		},
+		{
+			"key": "base_url_product",
+			"value": "http://localhost:3002",
+			"type": "string"
+		},
+		{
+			"key": "base_url_order",
+			"value": "http://localhost:3003",
+			"type": "string"
+		},
+		{
+			"key": "userId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "userId2",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "productId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "productId2",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "orderId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "orderId2",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
+

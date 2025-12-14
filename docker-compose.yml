@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  user-service:
+    build: ./user-service
+    container_name: user-service
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - MONGO_URL=mongodb+srv://mayfive123456_db_user:w68rT8OJdtHaVy8H@cluster0.ppfzcje.mongodb.net/user_db?retryWrites=true&w=majority
+    restart: unless-stopped
+    networks:
+      - microservices-network
+
+  product-service:
+    build: ./product-service
+    container_name: product-service
+    ports:
+      - "3002:3002"
+    environment:
+      - PORT=3002
+      - MONGO_URL=mongodb+srv://mayfive123456_db_user:w68rT8OJdtHaVy8H@cluster0.ppfzcje.mongodb.net/product_db?retryWrites=true&w=majority
+    restart: unless-stopped
+    networks:
+      - microservices-network
+
+  order-service:
+    build: ./order-service
+    container_name: order-service
+    ports:
+      - "3003:3003"
+    environment:
+      - PORT=3003
+      - MONGO_URL=mongodb+srv://mayfive123456_db_user:w68rT8OJdtHaVy8H@cluster0.ppfzcje.mongodb.net/order_db?retryWrites=true&w=majority
+      - USER_URL=http://user-service:3001
+      - PRODUCT_URL=http://product-service:3002
+    depends_on:
+      - user-service
+      - product-service
+    restart: unless-stopped
+    networks:
+      - microservices-network
+
+networks:
+  microservices-network:
+    driver: bridge
+
