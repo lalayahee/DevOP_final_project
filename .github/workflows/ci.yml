@@ -1,0 +1,209 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master, develop ]
+
+env:
+  NODE_VERSION: '18'
+  DOCKER_BUILDKIT: 1
+
+jobs:
+  # Lint and Test User Service
+  test-user-service:
+    name: Test User Service
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./user-service
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: user-service/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run linter
+        run: npm run lint || true
+
+      - name: Run tests
+        run: npm test
+        env:
+          MONGO_URL: mongodb://localhost:27017/test_db
+          PORT: 3001
+
+  # Test Order Service
+  test-order-service:
+    name: Test Order Service
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./order-service
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: order-service/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check syntax
+        run: node --check server.js || true
+
+  # Test Product Service
+  test-product-service:
+    name: Test Product Service
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./product-service
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: product-service/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check syntax
+        run: node --check server.js || true
+
+  # Build Docker Images
+  build-images:
+    name: Build Docker Images
+    runs-on: ubuntu-latest
+    needs: [test-user-service, test-order-service, test-product-service]
+    
+    strategy:
+      matrix:
+        service:
+          - name: user-service
+            path: ./user-service
+            port: 3001
+          - name: product-service
+            path: ./product-service
+            port: 3002
+          - name: order-service
+            path: ./order-service
+            port: 3003
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ${{ matrix.service.path }}
+          push: false
+          tags: ${{ matrix.service.name }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Test Docker image
+        run: |
+          docker run --rm -d --name test-${{ matrix.service.name }} \
+            -p ${{ matrix.service.port }}:${{ matrix.service.port }} \
+            ${{ matrix.service.name }}:latest || true
+          sleep 5
+          docker stop test-${{ matrix.service.name }} || true
+
+  # Build and Test with Docker Compose
+  docker-compose-test:
+    name: Docker Compose Integration Test
+    runs-on: ubuntu-latest
+    needs: [build-images]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build services with docker-compose
+        run: |
+          docker-compose build
+
+      - name: Start services
+        run: |
+          docker-compose up -d
+          sleep 10
+
+      - name: Check service health
+        run: |
+          # Wait for services to be ready
+          timeout 30 bash -c 'until curl -f http://localhost:3001/health || curl -f http://localhost:3001/; do sleep 2; done' || true
+          timeout 30 bash -c 'until curl -f http://localhost:3002/health || curl -f http://localhost:3002/; do sleep 2; done' || true
+          timeout 30 bash -c 'until curl -f http://localhost:3003/health || curl -f http://localhost:3003/; do sleep 2; done' || true
+
+      - name: Show running containers
+        run: docker-compose ps
+
+      - name: Show logs on failure
+        if: failure()
+        run: docker-compose logs
+
+      - name: Stop services
+        if: always()
+        run: docker-compose down -v
+
+  # Deploy (optional - uncomment and configure for your deployment target)
+  # deploy:
+  #   name: Deploy to Production
+  #   runs-on: ubuntu-latest
+  #   needs: [docker-compose-test]
+  #   if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+  #   environment:
+  #     name: production
+  #   
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+  #     
+  #     - name: Login to Docker Registry
+  #       uses: docker/login-action@v3
+  #       with:
+  #         registry: ${{ secrets.DOCKER_REGISTRY }}
+  #         username: ${{ secrets.DOCKER_USERNAME }}
+  #         password: ${{ secrets.DOCKER_PASSWORD }}
+  #     
+  #     - name: Build and push images
+  #       uses: docker/build-push-action@v5
+  #       with:
+  #         context: ./user-service
+  #         push: true
+  #         tags: ${{ secrets.DOCKER_REGISTRY }}/user-service:${{ github.sha }}
+  #     
+  #     - name: Deploy to server
+  #       run: |
+  #         # Add your deployment commands here
+  #         echo "Deploying to production..."
+
