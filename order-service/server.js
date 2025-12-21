@@ -24,3 +24,5 @@ mongoose.connect(mongoUrl, {
     console.log("DB connection error:", err.message);
     process.exit(1);
   });
+
+  

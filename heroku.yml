@@ -1,0 +1,8 @@
+build:
+  docker:
+    web: ./user-service/Dockerfile
+    web: ./product-service/Dockerfile
+    web: ./order-service/Dockerfile
+run:
+  web: node server.js
+
