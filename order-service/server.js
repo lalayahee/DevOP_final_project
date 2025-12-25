@@ -25,4 +25,3 @@ mongoose.connect(mongoUrl, {
     process.exit(1);
   });
 
-  
