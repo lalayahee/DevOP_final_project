@@ -16,6 +16,16 @@ router.post('/', async (req, res) => {
     }
 });
 
+// GET /users - List users
+router.get('/', async (req, res) => {
+    try {
+        const users = await User.find().sort({ name: 1 });
+        res.json(users.map(u => ({ _id: u._id, name: u.name, email: u.email })));
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // GET /users/:id - Get user by ID
 router.get('/:id', async (req, res) => {
     try {

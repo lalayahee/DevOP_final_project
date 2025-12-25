@@ -1,0 +1,81 @@
+services:
+  mongo:
+    image: mongo:6.0
+    restart: unless-stopped
+    volumes:
+      - mongo_data:/data/db
+    ports:
+      - "27017:27017"
+
+  user-service:
+    build: ./user-service
+    depends_on:
+      - mongo
+    environment:
+      - MONGO_URL=mongodb://mongo:27017/user_db
+      - PORT=3001
+    ports:
+      - "3001:3001"
+
+  product-service:
+    build: ./product-service
+    depends_on:
+      - mongo
+    environment:
+      - MONGO_URL=mongodb://mongo:27017/product_db
+      - PORT=3002
+    ports:
+      - "3002:3002"
+
+  order-service:
+    build: ./order-service
+    depends_on:
+      - mongo
+      - user-service
+      - product-service
+    environment:
+      - MONGO_URL=mongodb://mongo:27017/order_db
+      - USER_URL=http://user-service:3001
+      - PRODUCT_URL=http://product-service:3002
+      - PORT=3003
+    ports:
+      - "3003:3003"
+
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+
+  grafana:
+    image: grafana/grafana:9.0.0
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - ./monitoring/grafana:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+    ports:
+      - "3000:3000"
+
+  loki:
+    image: grafana/loki:2.7.1
+    command: -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - ./monitoring/loki-config.yml:/etc/loki/local-config.yaml:ro
+    ports:
+      - "3100:3100"
+
+  promtail:
+    image: grafana/promtail:2.7.1
+    volumes:
+      - /var/log:/var/log
+      - ./monitoring/promtail-config.yml:/etc/promtail/config.yml:ro
+    command: -config.file=/etc/promtail/config.yml
+
+volumes:
+  mongo_data:
+
+networks:
+  default:
+    name: microservices-network

@@ -10,3 +10,6 @@ npm-debug.log
 # Logs
 logs/
 *.log
+
+# Ignore Grafana DB produced by local dev
+monitoring/grafana/grafana.db

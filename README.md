@@ -118,6 +118,34 @@ heroku config:set PRODUCT_URL=https://your-app-product-service.herokuapp.com -a 
 cd user-service
 heroku git:remote -a your-app-user-service
 git push heroku main
+```
+
+### Frontend (React + Vite)
+
+- Start dev server:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+- Build for production and preview:
+
+```bash
+npm run build
+npm run preview
+```
+
+- Example production container:
+
+```bash
+cd frontend
+docker build -t devop_frontend .
+docker run -p 8080:80 devop_frontend
+```
+
+The frontend expects backend services at `http://localhost:3001` (user), `http://localhost:3002` (product), and `http://localhost:3003` (order) by default. Use `.env` in `frontend/` to override these (`VITE_USER_URL`, `VITE_PRODUCT_URL`, `VITE_ORDER_URL`).
 
 # Deploy Product Service
 cd ../product-service
