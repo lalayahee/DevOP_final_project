@@ -153,53 +153,7 @@ The project includes a GitHub Actions CI/CD pipeline that:
 3. **Integration Tests**: Tests the full stack with docker-compose
 4. **Deploys**: Automatically deploys to Heroku on push to main branch
 
-### Setup CI/CD Secrets
-
-Add the following secrets to your GitHub repository:
-
-- `HEROKU_API_KEY`: Your Heroku API key
-- `HEROKU_USER_SERVICE_APP`: Name of your user-service Heroku app
-- `HEROKU_PRODUCT_SERVICE_APP`: Name of your product-service Heroku app
-- `HEROKU_ORDER_SERVICE_APP`: Name of your order-service Heroku app
-
-### Get Heroku API Key
-
-```bash
-heroku auth:token
-```
-
-Add this token as `HEROKU_API_KEY` in GitHub Secrets.
-
-## 📊 Observability & Monitoring
-
-The project includes comprehensive observability tools:
-
-### Services Included
-
-1. **Prometheus** (Port 9090): Metrics collection and storage
-2. **Grafana** (Port 3000): Visualization and dashboards
-3. **Loki** (Port 3100): Log aggregation
-4. **Promtail**: Log collection agent
-
-### Access Observability Tools
-
-```bash
-# Start all services including observability
-docker-compose up -d
-
-# Access Grafana
-# URL: http://localhost:3000
-# Username: admin
-# Password: admin
-
-# Access Prometheus
-# URL: http://localhost:9090
-
-# Access Loki
-# URL: http://localhost:3100
-```
-
-### Viewing Metrics
+<!-- Viewing Metrics -->
 
 1. **Grafana Dashboards**: 
    - Navigate to http://localhost:3000
@@ -308,8 +262,7 @@ DevOP_final_project/
 │   └── workflows/
 │       └── ci.yml        # CI/CD pipeline
 ├── docker-compose.yml    # Local development & observability
-├── heroku.yml           # Heroku container deployment
-└── app.json             # Heroku app configuration
+
 ```
 
 ## 🔧 Configuration
@@ -323,9 +276,6 @@ The services use MongoDB Atlas by default. To use a local MongoDB instance:
 
 ### Service Communication
 
-Order Service communicates with User and Product services using:
-- Docker Compose: Service names (e.g., `http://user-service:3001`)
-- Heroku: Full URLs (e.g., `https://your-app.herokuapp.com`)
 
 ## 🚨 Troubleshooting
 
