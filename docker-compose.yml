@@ -1,12 +1,13 @@
 version: "3.8"
 
 services:
-  auth-service:
-    build: ./auth-service
+  user-service:
+    build: ./user-service
+    container_name: user-service
     ports:
       - "3001:3001"
     depends_on:
-      - mongo-auth
+      - mongo-user
 
   product-service:
     build: ./product-service
@@ -22,8 +23,9 @@ services:
     depends_on:
       - mongo-order
 
-  mongo-auth:
+  mongo-user:
     image: mongo
+    container_name: mongo-user
     ports:
       - "27017:27017"
 
