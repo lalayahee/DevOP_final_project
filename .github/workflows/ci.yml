@@ -164,11 +164,16 @@ jobs:
 
       - name: Build services with docker-compose
         run: |
-          docker-compose build
+          docker compose build
+
+      - name: Install Docker Compose plugin
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose-plugin
 
       - name: Start services
         run: |
-          docker-compose up -d
+          docker compose up -d
           sleep 10
 
       - name: Check service health
@@ -179,14 +184,14 @@ jobs:
           timeout 30 bash -c 'until curl -f http://localhost:3003/health || curl -f http://localhost:3003/; do sleep 2; done' || true
 
       - name: Show running containers
-        run: docker-compose ps
+        run: docker compose ps
 
       - name: Show logs on failure
         if: failure()
-        run: docker-compose logs
+        run: docker compose logs
 
       - name: Stop services
         if: always()
-        run: docker-compose down -v
+        run: docker compose down -v
 
   

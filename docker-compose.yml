@@ -1,0 +1,38 @@
+version: "3.8"
+
+services:
+  auth-service:
+    build: ./auth-service
+    ports:
+      - "3001:3001"
+    depends_on:
+      - mongo-auth
+
+  product-service:
+    build: ./product-service
+    ports:
+      - "3002:3002"
+    depends_on:
+      - mongo-product
+
+  order-service:
+    build: ./order-service
+    ports:
+      - "3003:3003"
+    depends_on:
+      - mongo-order
+
+  mongo-auth:
+    image: mongo
+    ports:
+      - "27017:27017"
+
+  mongo-product:
+    image: mongo
+    ports:
+      - "27018:27017"
+
+  mongo-order:
+    image: mongo
+    ports:
+      - "27019:27017"
